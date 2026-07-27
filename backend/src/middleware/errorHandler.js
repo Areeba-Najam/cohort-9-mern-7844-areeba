@@ -11,7 +11,11 @@ class AppError extends Error {
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 const globalErrorHandler = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
+
+  let statusCode = err.statusCode || 500;
+  if (statusCode < 400 || statusCode > 599) {
+    statusCode = 500;
+  }
   const isOperational = err.isOperational || false;
 
   logger.error(
