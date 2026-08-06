@@ -9,15 +9,25 @@ const generateToken = (userId) => {
 };
 
 const registerUser = async ({ name, email, password }) => {
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new AppError('An account with this email already exists', 409);
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new AppError('An account with this email already exists', 409);
+    }
+
+    const user = await User.create({ name, email, password });
+    const token = generateToken(user._id);
+
+    return { user, token };
+  } catch (err) {
+    if (err.code === 11000) {
+      throw new AppError('An account with this email already exists', 409);
+    }
+    if (err.name === 'ValidationError') {
+      throw new AppError(err.message, 400);
+    }
+    throw err;
   }
-
-  const user = await User.create({ name, email, password });
-  const token = generateToken(user._id);
-
-  return { user, token };
 };
 
 const loginUser = async ({ email, password }) => {

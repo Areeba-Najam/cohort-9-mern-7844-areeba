@@ -23,6 +23,15 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Password is required'],
       minlength: 6,
       select: false,
+      validate: {
+        validator: function(value) {
+          if (typeof bcrypt.truncates === 'function') {
+            return !bcrypt.truncates(value);
+          }
+          return Buffer.byteLength(value, 'utf8') <= 72;
+        },
+        message: 'Password is too long (exceeds 72 bytes)'
+      }
     },
   },
   { timestamps: true }
@@ -30,8 +39,13 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre('save', async function hashPassword() {
   if (!this.isModified('password')) return;
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  } catch (err) {
+    throw err;
+  }
 });
 
 userSchema.methods.comparePassword = async function comparePassword(candidatePassword) {
