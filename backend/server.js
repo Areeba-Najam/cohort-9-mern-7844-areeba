@@ -1,23 +1,33 @@
 require('dotenv').config();
 const app = require('./src/app');
+const connectDB = require('./src/config/db');
 const logger = require('./src/config/logger');
-
 
 const PORT = parseInt(process.env.PORT, 10) || 5000;
 
-const server = app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
-});
+let server;
 
+const startServer = async () => {
+  await connectDB();
+
+  server = app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+  });
+};
 
 const shutdown = () => {
   logger.info('Shutting down gracefully...');
+
+  if (!server) {
+    process.exit(0);
+    return;
+  }
+
   server.close(() => {
     logger.info('Closed remaining connections.');
     process.exit(0);
   });
 
-  // Force shutdown if it takes longer than 10 seconds
   setTimeout(() => {
     logger.error('Could not close connections in time, forcefully shutting down');
     process.exit(1);
@@ -31,3 +41,5 @@ process.on('unhandledRejection', (err) => {
   logger.error({ err }, 'Unhandled Rejection - shutting down');
   shutdown();
 });
+
+startServer();
