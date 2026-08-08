@@ -1,6 +1,5 @@
-const { AppError } = require('../middleware/errorHandler');
+const { AppError,asyncHandler } = require('../middleware/errorHandler');
 const authService = require('../services/authService');
-const asyncHandler = require('../middleware/asyncHandler');
 
 const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -10,8 +9,7 @@ const register = asyncHandler(async (req, res) => {
   const { user, token } = await authService.registerUser({ name, email, password });
   res.status(201).json({
     success: true,
-    user,
-    token
+    data: { user, token }
   });
 });
 
@@ -24,15 +22,14 @@ const login = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    user,
-    token
+    data: { user, token }
   });
 });
 
 const getMe = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
-    user: req.user
+    data: { user: req.user }
   });
 });
 
