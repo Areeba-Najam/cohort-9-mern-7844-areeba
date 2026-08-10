@@ -1,13 +1,30 @@
-function App() {
-  const appName = 'Notes App';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ProtectedRoute from './components/ProtectedRoute';
 
+function App() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-      <h1 className="text-3xl font-semibold text-brand mb-2">{appName}</h1>
-      <p className="text-gray-600 text-sm">
-        Vite frontend infrastructure is ready. Authorization and the remaining screens will be added in future PRs.
-      </p>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen flex items-center justify-center">
+                  <p className="text-gray-600 text-sm">Dashboard coming in PR 6.</p>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
