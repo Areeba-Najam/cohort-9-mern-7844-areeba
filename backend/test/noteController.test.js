@@ -156,6 +156,24 @@ describe('Note API endpoints', () => {
 
       expect(res).to.have.status(404);
     });
+
+    it('returns 400 when no updatable fields are provided', async () => {
+      const createRes = await chai
+        .request(app)
+        .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ title: 'Untouched' });
+
+      const noteId = createRes.body.data.note._id;
+
+      const res = await chai
+        .request(app)
+        .patch(`/api/notes/${noteId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ user: 'someone-else-id' }); // only a disallowed field
+
+      expect(res).to.have.status(400);
+    });
   });
 
   describe('DELETE /api/notes/:id', () => {
