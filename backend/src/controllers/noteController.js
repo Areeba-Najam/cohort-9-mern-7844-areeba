@@ -1,8 +1,27 @@
-const { asyncHandler } = require('../middleware/errorHandler');
+const { asyncHandler, AppError } = require('../middleware/errorHandler');
 const noteService = require('../services/noteService');
 
 const createNote = asyncHandler(async (req, res) => {
   const { title, content, tags } = req.body;
+
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    throw new AppError('Title is required and must be a non-empty string', 400);
+  }
+
+  if (title.length > 150) {
+    throw new AppError('Title must be 150 characters or fewer', 400);
+  }
+
+  if (content !== undefined && typeof content !== 'string') {
+    throw new AppError('Content must be a string', 400);
+  }
+
+  if (tags !== undefined) {
+    if (!Array.isArray(tags) || !tags.every((tag) => typeof tag === 'string')) {
+      throw new AppError('Tags must be an array of strings', 400);
+    }
+  }
+
   const note = await noteService.createNote(req.user._id, { title, content, tags });
 
   res.status(201).json({

@@ -58,6 +58,24 @@ describe('Note API endpoints', () => {
       const res = await chai.request(app).post('/api/notes').send({ title: 'No auth' });
       expect(res).to.have.status(401);
     });
+    it('returns 400 when title is missing', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ content: 'No title here' });
+
+      expect(res).to.have.status(400);
+    });
+    it('returns 400 when title is only whitespace', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ title: '   ' });
+
+      expect(res).to.have.status(400);
+    });
   });
 
   describe('GET /api/notes', () => {
