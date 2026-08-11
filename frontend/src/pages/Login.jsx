@@ -20,8 +20,8 @@ function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-    } finally {
+      setError(err.message);
+    } finally {  
       setSubmitting(false);
     }
   };

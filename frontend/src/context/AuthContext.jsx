@@ -20,18 +20,27 @@ export function AuthProvider({ children }) {
       .catch(() => localStorage.removeItem('token'))
       .finally(() => setLoading(false));
   }, []);
-
   const login = async (email, password) => {
+  try {
     const res = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', res.data.data.token);
     setUser(res.data.data.user);
-  };
+  } catch (err) {
+    const message = err.response?.data?.message || 'Login failed. Please try again.';
+    throw new Error(message);
+  }
+};
 
-  const register = async (name, email, password) => {
+const register = async (name, email, password) => {
+  try {
     const res = await api.post('/auth/register', { name, email, password });
     localStorage.setItem('token', res.data.data.token);
     setUser(res.data.data.user);
-  };
+  } catch (err) {
+    const message = err.response?.data?.message || 'Registration failed. Please try again.';
+    throw new Error(message);
+  }
+};
 
   const logout = () => {
     localStorage.removeItem('token');
