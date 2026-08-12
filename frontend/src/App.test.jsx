@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders the app title', () => {
+test('redirects to login page by default', () => {
   render(<App />);
-  const heading = screen.getByText(/Notes App/i);
-  expect(heading).toBeInTheDocument();
+  const emailInput = screen.getByLabelText(/email/i);
+  expect(emailInput).toBeInTheDocument();
 });
