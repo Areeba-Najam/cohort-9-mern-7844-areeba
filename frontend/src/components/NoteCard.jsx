@@ -19,14 +19,15 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
             {note.title}
           </h3>
           <button
-            aria-label={note.isPinned ? 'Unpin note' : 'Pin note'}
+            aria-label={note.isPinned ?  'Unpin note' : 'Pin note'}
+            aria-pressed={note.isPinned}
             onClick={(e) => {
               e.stopPropagation();
               onTogglePin(note);
             }}
             className={`text-lg leading-none shrink-0 ${note.isPinned ? 'opacity-100' : 'opacity-30 hover:opacity-70'}`}
           >
-            
+            📌
           </button>
         </div>
 

@@ -8,15 +8,22 @@ function Dashboard() {
   const { user, logout } = useAuth();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [editingNote, setEditingNote] = useState(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const [search, setSearch] = useState('');
 
   const loadNotes = async () => {
     setLoading(true);
-    const data = await fetchNotes();
-    setNotes(data);
-    setLoading(false);
+    setError('');
+    try {
+      const data = await fetchNotes();
+      setNotes(data);
+    } catch (err) {
+      setError('Could not load your notes. Please refresh and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -24,37 +31,41 @@ function Dashboard() {
   }, []);
 
   const handleSave = async (payload) => {
-    if (editingNote) {
-      const updated = await updateNote(editingNote._id, payload);
-      setNotes((prev) => prev.map((n) => (n._id === updated._id ? updated : n)));
-    } else {
-      const created = await createNote(payload);
-      setNotes((prev) => [created, ...prev]);
+    try {
+      if (editingNote) {
+        const updated = await updateNote(editingNote._id, payload);
+        setNotes((prev) => prev.map((n) => (n._id === updated._id ? updated : n)));
+      } else {
+        const created = await createNote(payload);
+        setNotes((prev) => [created, ...prev]);
+      }
+      setEditorOpen(false);
+      setEditingNote(null);
+    } catch (err) {
+      throw err;
     }
-    setEditorOpen(false);
-    setEditingNote(null);
   };
 
   const handleTogglePin = async (note) => {
-    const updated = await updateNote(note._id, { isPinned: !note.isPinned });
-    setNotes((prev) => prev.map((n) => (n._id === updated._id ? updated : n)));
+    setError('');
+    try {
+      const updated = await updateNote(note._id, { isPinned: !note.isPinned });
+      setNotes((prev) => prev.map((n) => (n._id === updated._id ? updated : n)));
+    } catch (err) {
+      setError('Could not update pin status. Please try again.');
+    }
   };
+
   const handleDelete = async (note) => {
     if (!window.confirm(`Delete "${note.title}"?`)) return;
-
+    setError('');
     try {
       await deleteNote(note._id);
       setNotes((prev) => prev.filter((n) => n._id !== note._id));
-    } catch (error) {
-      console.error("Delete Error:", error);
-      alert(error.response?.data?.message || "Failed to delete the note. Is your backend server running?");
+    } catch (err) {
+      setError('Could not delete the note. Please try again.');
     }
   };
-//   const handleDelete = async (note) => {
-//     if (!window.confirm(`Delete "${note.title}"?`)) return;
-//     await deleteNote(note._id);
-//     setNotes((prev) => prev.filter((n) => n._id !== note._id));
-//   };
 
   const filteredNotes = notes.filter((n) => {
     const q = search.toLowerCase();
@@ -92,6 +103,12 @@ function Dashboard() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-8">
+        {error && (
+          <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            {error}
+          </div>
+        )}
+
         {loading ? (
           <p className="text-sm text-gray-500">Loading notes...</p>
         ) : filteredNotes.length === 0 ? (
@@ -124,9 +141,9 @@ function Dashboard() {
           setEditingNote(null);
           setEditorOpen(true);
         }}
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-brand text-white text-2xl shadow-lg hover:scale-105 transition-transform flex items-center justify-center"
+        className="group fixed bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-tr from-brand to-blue-400 text-white text-3xl shadow-lg shadow-brand/40 hover:shadow-2xl hover:shadow-brand/60 hover:-translate-y-1 hover:scale-110 active:scale-90 transition-all duration-300 ease-out flex items-center justify-center z-40"
       >
-        +
+        <span className="transition-transform duration-300 group-hover:rotate-90">+</span>
       </button>
 
       {editorOpen && (
