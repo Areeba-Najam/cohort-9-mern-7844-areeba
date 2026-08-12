@@ -1,0 +1,71 @@
+const { asyncHandler, AppError } = require('../middleware/errorHandler');
+const noteService = require('../services/noteService');
+
+const createNote = asyncHandler(async (req, res) => {
+  const { title, content, tags } = req.body;
+
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    throw new AppError('Title is required and must be a non-empty string', 400);
+  }
+
+  if (title.length > 150) {
+    throw new AppError('Title must be 150 characters or fewer', 400);
+  }
+
+  if (content !== undefined && typeof content !== 'string') {
+    throw new AppError('Content must be a string', 400);
+  }
+
+  if (tags !== undefined) {
+    if (!Array.isArray(tags) || !tags.every((tag) => typeof tag === 'string')) {
+      throw new AppError('Tags must be an array of strings', 400);
+    }
+  }
+
+  const note = await noteService.createNote(req.user._id, { title, content, tags });
+
+  res.status(201).json({
+    success: true,
+    message: 'Note created successfully',
+    data: { note },
+  });
+});
+
+const getNotes = asyncHandler(async (req, res) => {
+  const notes = await noteService.getNotesForUser(req.user._id);
+
+  res.status(200).json({
+    success: true,
+    data: { notes, count: notes.length },
+  });
+});
+
+const getNote = asyncHandler(async (req, res) => {
+  const note = await noteService.getNoteById(req.user._id, req.params.id);
+
+  res.status(200).json({
+    success: true,
+    data: { note },
+  });
+});
+
+const updateNote = asyncHandler(async (req, res) => {
+  const note = await noteService.updateNote(req.user._id, req.params.id, req.body);
+
+  res.status(200).json({
+    success: true,
+    message: 'Note updated successfully',
+    data: { note },
+  });
+});
+
+const deleteNote = asyncHandler(async (req, res) => {
+  await noteService.deleteNote(req.user._id, req.params.id);
+
+  res.status(200).json({
+    success: true,
+    message: 'Note deleted successfully',
+  });
+});
+
+module.exports = { createNote, getNotes, getNote, updateNote, deleteNote };
