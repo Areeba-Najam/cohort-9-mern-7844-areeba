@@ -2,7 +2,7 @@ const { asyncHandler, AppError } = require('../middleware/errorHandler');
 const noteService = require('../services/noteService');
 
 const createNote = asyncHandler(async (req, res) => {
-  const { title, content, tags } = req.body;
+  const { title, content, tags, color } = req.body;
 
   if (!title || typeof title !== 'string' || !title.trim()) {
     throw new AppError('Title is required and must be a non-empty string', 400);
@@ -22,7 +22,7 @@ const createNote = asyncHandler(async (req, res) => {
     }
   }
 
-  const note = await noteService.createNote(req.user._id, { title, content, tags });
+  const note = await noteService.createNote(req.user._id, { title, content, tags, color });
 
   res.status(201).json({
     success: true,
