@@ -1,0 +1,163 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { fetchNotes, createNote, updateNote, deleteNote } from '../services/noteApi';
+import NoteCard from '../components/NoteCard';
+import NoteEditor from '../components/NoteEditor';
+
+function Dashboard() {
+  const { user, logout } = useAuth();
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [editingNote, setEditingNote] = useState(null);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const loadNotes = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await fetchNotes();
+      setNotes(data);
+    } catch (err) {
+      setError('Could not load your notes. Please refresh and try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadNotes();
+  }, []);
+
+  const handleSave = async (payload) => {
+    try {
+      if (editingNote) {
+        const updated = await updateNote(editingNote._id, payload);
+        setNotes((prev) => prev.map((n) => (n._id === updated._id ? updated : n)));
+      } else {
+        const created = await createNote(payload);
+        setNotes((prev) => [created, ...prev]);
+      }
+      setEditorOpen(false);
+      setEditingNote(null);
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const handleTogglePin = async (note) => {
+    setError('');
+    try {
+      const updated = await updateNote(note._id, { isPinned: !note.isPinned });
+      setNotes((prev) => prev.map((n) => (n._id === updated._id ? updated : n)));
+    } catch (err) {
+      setError('Could not update pin status. Please try again.');
+    }
+  };
+
+  const handleDelete = async (note) => {
+    if (!window.confirm(`Delete "${note.title}"?`)) return;
+    setError('');
+    try {
+      await deleteNote(note._id);
+      setNotes((prev) => prev.filter((n) => n._id !== note._id));
+    } catch (err) {
+      setError('Could not delete the note. Please try again.');
+    }
+  };
+
+  const filteredNotes = notes.filter((n) => {
+    const q = search.toLowerCase();
+    return (
+      n.title.toLowerCase().includes(q) ||
+      n.content?.toLowerCase().includes(q) ||
+      n.tags?.some((t) => t.toLowerCase().includes(q))
+    );
+  });
+
+  return (
+    <div className="min-h-screen bg-[#faf8f5]">
+      <header className="sticky top-0 z-10 bg-[#faf8f5]/90 backdrop-blur border-b border-black/5">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+          <h1 className="text-xl font-semibold text-gray-900">Notes</h1>
+
+          <input
+            type="text"
+            placeholder="Search notes..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 max-w-md rounded-full border border-gray-200 px-4 py-2 text-sm focus:outline-none focus:border-brand"
+          />
+
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-600 hidden sm:inline">{user?.name}</span>
+            <button
+              onClick={logout}
+              className="text-sm text-gray-600 hover:text-gray-900"
+            >
+              Log out
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-6 py-8">
+        {error && (
+          <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            {error}
+          </div>
+        )}
+
+        {loading ? (
+          <p className="text-sm text-gray-500">Loading notes...</p>
+        ) : filteredNotes.length === 0 ? (
+          <div className="text-center py-24">
+            <p className="text-gray-500 text-sm">
+              {search ? 'No notes match your search.' : 'No notes yet — create your first one.'}
+            </p>
+          </div>
+        ) : (
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
+            {filteredNotes.map((note) => (
+              <NoteCard
+                key={note._id}
+                note={note}
+                onOpen={(n) => {
+                  setEditingNote(n);
+                  setEditorOpen(true);
+                }}
+                onTogglePin={handleTogglePin}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
+      </main>
+
+      <button
+        aria-label="New note"
+        onClick={() => {
+          setEditingNote(null);
+          setEditorOpen(true);
+        }}
+        className="group fixed bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-tr from-brand to-blue-400 text-white text-3xl shadow-lg shadow-brand/40 hover:shadow-2xl hover:shadow-brand/60 hover:-translate-y-1 hover:scale-110 active:scale-90 transition-all duration-300 ease-out flex items-center justify-center z-40"
+      >
+        <span className="transition-transform duration-300 group-hover:rotate-90">+</span>
+      </button>
+
+      {editorOpen && (
+        <NoteEditor
+          note={editingNote}
+          onSave={handleSave}
+          onCancel={() => {
+            setEditorOpen(false);
+            setEditingNote(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+export default Dashboard;
