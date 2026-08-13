@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import RichTextEditor from './RichTextEditor';
+import ColorPicker from './ColorPicker';
 
 function NoteEditor({ note, onSave, onCancel }) {
   const [title, setTitle] = useState(note?.title || '');
@@ -7,12 +8,14 @@ function NoteEditor({ note, onSave, onCancel }) {
   const [tagsInput, setTagsInput] = useState(note?.tags?.join(', ') || '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
-  
+  const [color, setColor] = useState(note?.color || 'default');
+
   useEffect(() => {
     setTitle(note?.title || '');
     setContent(note?.content || '');
     setTagsInput(note?.tags?.join(', ') || '');
     setError('');
+    setColor(note?.color || 'default');
   }, [note]);
 
   const handleSave = async () => {
@@ -25,11 +28,11 @@ function NoteEditor({ note, onSave, onCancel }) {
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
-
+  
     setSaving(true);
     setError('');
     try {
-      await onSave({ title: title.trim(), content, tags });
+      await onSave({ title: title.trim(), content, tags, color});
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save note. Please try again.');
     } finally {
@@ -75,7 +78,9 @@ function NoteEditor({ note, onSave, onCancel }) {
           onChange={(e) => setTagsInput(e.target.value)}
           className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 mb-5 focus:outline-none focus:border-brand"
         />
-
+        <div className="mb-5">
+          <ColorPicker selected={color} onSelect={setColor} />
+        </div>
         <div className="flex justify-end gap-3">
           <button
             onClick={onCancel}

@@ -3,16 +3,20 @@ import { vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
 import Dashboard from './Dashboard';
+import { ThemeProvider } from '../context/ThemeContext';
 import * as noteApi from '../services/noteApi';
+
 
 vi.mock('../services/noteApi');
 
 function renderDashboard() {
   return render(
     <BrowserRouter>
-      <AuthProvider>
-        <Dashboard />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Dashboard />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

@@ -21,7 +21,7 @@ test('renders email and password fields', () => {
 
 test('renders a link to the register page', () => {
   renderLogin();
-  expect(screen.getByText(/sign up/i)).toBeInTheDocument();
+  expect(screen.getByText(/create an account/i)).toBeInTheDocument();
 });
 
 test('updates input values on change', () => {

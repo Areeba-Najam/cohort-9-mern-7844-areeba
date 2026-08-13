@@ -22,7 +22,7 @@ test('renders name, email, and password fields', () => {
 
 test('renders a link to the login page', () => {
   renderRegister();
-  expect(screen.getByText(/log in/i)).toBeInTheDocument();
+  expect(screen.getByText(/sign in/i)).toBeInTheDocument();
 });
 
 test('enforces minimum password length', () => {
