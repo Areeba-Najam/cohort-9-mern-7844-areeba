@@ -12,9 +12,17 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
 
   return (
     <div
-      className="break-inside-avoid mb-4 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden"
+      role="button"
+      tabIndex={0}
+      className="break-inside-avoid mb-4 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-950"
       style={{ backgroundColor: theme === 'dark' ? color.dark : color.light }}
       onClick={() => onOpen(note)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen(note);
+        }
+      }}
     >
       <div className="p-5">
         <div className="flex items-start justify-between gap-2">
