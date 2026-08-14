@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 export const NOTE_COLORS = [
   { name: 'default', light: '#ffffff', dark: '#18181b' }, 
   { name: 'peach', light: '#ffe8d6', dark: '#522b29' },
@@ -9,12 +10,13 @@ export const NOTE_COLORS = [
 ];
 function ColorPicker({ selected, onSelect }) {
   return (
-    <div className="flex gap-2 flex-wrap" role="group" aria-label="Note color">
+    <div className="flex gap-2">
       {NOTE_COLORS.map((color) => (
         <button
           key={color.name}
           type="button"
           aria-label={`Set note color to ${color.name}`}
+          aria-pressed={selected === color.name} 
           onClick={() => onSelect(color.name)}
           className={`w-7 h-7 rounded-full border-2 transition-transform ${
             selected === color.name ? 'border-brand scale-110' : 'border-transparent'
@@ -25,5 +27,10 @@ function ColorPicker({ selected, onSelect }) {
     </div>
   );
 }
+
+ColorPicker.propTypes = {
+  selected: PropTypes.string,
+  onSelect: PropTypes.func.isRequired,
+};
 
 export default ColorPicker;

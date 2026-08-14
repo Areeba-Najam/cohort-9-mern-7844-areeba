@@ -29,7 +29,7 @@ function Login() {
   return (
     <AuthLayout
       heading="Welcome back to your notes."
-      subheading="Sign in to pick up right where you left off  everything's exactly how you left it."
+      subheading="Sign in to pick up right where you left off. Everything is exactly how you left it."
     >
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Sign in</h1>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-7">Enter your details to continue.</p>

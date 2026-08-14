@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 function AuthLayout({ heading, subheading, children }) {
   return (
     <div className="min-h-screen flex bg-white dark:bg-gray-950">
@@ -20,6 +22,10 @@ function AuthLayout({ heading, subheading, children }) {
       </div>
     </div>
   );
+  AuthLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+  heading: PropTypes.string.isRequired,
+  subheading: PropTypes.string.isRequired,
 }
-
+}
 export default AuthLayout;

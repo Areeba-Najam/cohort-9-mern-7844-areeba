@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { NOTE_COLORS } from './ColorPicker';
 import { useTheme } from '../context/ThemeContext';
 
@@ -11,17 +12,17 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
 
   return (
     <div
-      className="break-inside-avoid mb-4 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm hover:shadow-lg transition-shadow duration-200 cursor-pointer overflow-hidden"
-      style={{backgroundColor: theme === 'dark' ? color.dark : color.light}}
+      className="break-inside-avoid mb-4 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden"
+      style={{ backgroundColor: theme === 'dark' ? color.dark : color.light }}
       onClick={() => onOpen(note)}
     >
-       <div className="p-5">
+      <div className="p-5">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-bold text-slate-700 dark:text-white text-lg tracking-tight leading-snug break-words">
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg tracking-tight leading-snug break-words">
             {note.title}
-         </h3>
+          </h3>
           <button
-            aria-label={note.isPinned ?  'Unpin note' : 'Pin note'}
+            aria-label={note.isPinned ? 'Unpin note' : 'Pin note'}
             aria-pressed={note.isPinned}
             onClick={(e) => {
               e.stopPropagation();
@@ -32,25 +33,23 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
             📌
           </button>
         </div>
-
+        
         {note.content && (
-          <p className="mt-2 text-sm text-white-700 break-words line-clamp-6">
+          <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 font-medium break-words line-clamp-6 leading-relaxed">
             {note.content.replace(/<[^>]*>/g, ' ').trim()}
           </p>
         )}
-
+        
         {note.tags?.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {note.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-xs px-2 py-0.5 rounded-full bg-black/10 text-gray-800"
-              >
+              <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-black/10 text-gray-800 dark:bg-white/10 dark:text-slate-100">
                 #{tag}
               </span>
             ))}
           </div>
         )}
+        
         <div className="mt-4 flex items-center justify-between">
           <span className="text-xs text-slate-500 dark:text-slate-300">
             {new Date(note.updatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
@@ -83,5 +82,19 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
   );
 }
 
-export default NoteCard;
+NoteCard.propTypes = {
+  note: PropTypes.shape({
+    _id: PropTypes.string,
+    title: PropTypes.string,
+    content: PropTypes.string,
+    color: PropTypes.string,
+    isPinned: PropTypes.bool,
+    tags: PropTypes.arrayOf(PropTypes.string),
+    updatedAt: PropTypes.string,
+  }).isRequired,
+  onOpen: PropTypes.func.isRequired,
+  onTogglePin: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
 
+export default NoteCard;
