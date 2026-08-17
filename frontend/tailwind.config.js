@@ -1,4 +1,5 @@
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -10,5 +11,5 @@ export default {
       },
     },
   },
-  plugins: [require('@tailwindcss/line-clamp'),require('@tailwindcss/typography')],
+  plugins: [require('@tailwindcss/typography')],
 }

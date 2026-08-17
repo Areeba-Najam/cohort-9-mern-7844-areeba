@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { fetchNotes, createNote, updateNote, deleteNote } from '../services/noteApi';
 import NoteCard from '../components/NoteCard';
 import NoteEditor from '../components/NoteEditor';
+import ThemeToggle from '../components/ThemeToggle';
+import { Link } from 'react-router-dom';
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -77,24 +79,31 @@ function Dashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-[#faf8f5]">
-      <header className="sticky top-0 z-10 bg-[#faf8f5]/90 backdrop-blur border-b border-black/5">
+    // Added dark:bg-gray-950
+    <div className="min-h-screen bg-[#faf8f5] dark:bg-gray-950 transition-colors duration-200">
+      {/* Added dark mode background and border colors for the header */}
+      <header className="sticky top-0 z-10 bg-[#faf8f5]/90 dark:bg-gray-950/90 backdrop-blur border-b border-black/5 dark:border-white/10 transition-colors duration-200">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-          <h1 className="text-xl font-semibold text-gray-900">Notes</h1>
+          {/* Added dark:text-white */}
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Notes</h1>
 
+          {/* Added dark mode styling for the search input */}
           <input
             type="text"
             placeholder="Search notes..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 max-w-md rounded-full border border-gray-200 px-4 py-2 text-sm focus:outline-none focus:border-brand"
+            className="flex-1 max-w-md rounded-full border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white px-4 py-2 text-sm focus:outline-none focus:border-brand transition-colors duration-200"
           />
 
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 hidden sm:inline">{user?.name}</span>
-            <button
-              onClick={logout}
-              className="text-sm text-gray-600 hover:text-gray-900"
+            <ThemeToggle />
+            <Link to="/profile" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+              {user?.name}
+            </Link>
+            <button 
+              onClick={logout} 
+              className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               Log out
             </button>
@@ -104,17 +113,17 @@ function Dashboard() {
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         {error && (
-          <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+          <div className="mb-6 text-sm text-red-600 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 rounded-lg px-4 py-3">
             {error}
           </div>
         )}
 
         {loading ? (
-          <p className="text-sm text-gray-500">Loading notes...</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Loading notes...</p>
         ) : filteredNotes.length === 0 ? (
           <div className="text-center py-24">
-            <p className="text-gray-500 text-sm">
-              {search ? 'No notes match your search.' : 'No notes yet — create your first one.'}
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              {search ? 'No notes match your search.' : 'No monsters, no deadlines, no notes. Create your first one.'}
             </p>
           </div>
         ) : (

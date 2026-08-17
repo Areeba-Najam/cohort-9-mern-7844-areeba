@@ -28,6 +28,11 @@ const noteSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    color: {
+      type: String,
+      enum: ['default', 'peach', 'mint', 'blush', 'lavender', 'butter', 'sage'],
+      default: 'default',
+    },
   },
   { timestamps: true }
 );

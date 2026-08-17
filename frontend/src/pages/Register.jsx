@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AuthLayout from '../components/AuthLayout';
 
 function Register() {
   const [name, setName] = useState('');
@@ -16,7 +17,6 @@ function Register() {
     e.preventDefault();
     setError('');
     setSubmitting(true);
-
     try {
       await register(name, email, password);
       navigate('/dashboard');
@@ -28,20 +28,21 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm bg-white p-8 rounded-lg shadow-sm border border-gray-200"
-      >
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Create an account</h1>
+    <AuthLayout
+      heading="Your ideas deserve a home."
+      subheading="Create an account and start capturing notes that actually stay organized."
+    >
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Create account</h1>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-7">Takes less than a minute.</p>
 
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mb-4">
-            {error}
-          </p>
-        )}
+      {error && (
+        <p className="text-sm text-red-600 bg-red-50 dark:bg-red-950 dark:text-red-400 border border-red-200 dark:border-red-900 rounded-lg px-3 py-2 mb-4">
+          {error}
+        </p>
+      )}
 
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">
+      <form onSubmit={handleSubmit}>
+        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5" htmlFor="name">
           Name
         </label>
         <input
@@ -50,10 +51,11 @@ function Register() {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-sm"
+          placeholder="Your name"
+          className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl px-4 py-2.5 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
 
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5" htmlFor="email">
           Email
         </label>
         <input
@@ -62,10 +64,11 @@ function Register() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-sm"
+          placeholder="you@example.com"
+          className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl px-4 py-2.5 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
 
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5" htmlFor="password">
           Password
         </label>
         <input
@@ -75,25 +78,26 @@ function Register() {
           minLength={6}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-6 text-sm"
+          placeholder="At least 6 characters"
+          className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl px-4 py-2.5 text-sm mb-6 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-brand text-white rounded py-2 text-sm font-medium disabled:opacity-60"
+          className="w-full bg-gradient-to-r from-[#5b3df5] to-[#8b5cf6] text-white rounded-xl py-2.5 text-sm font-semibold shadow-md shadow-brand/20 hover:opacity-90 transition-opacity disabled:opacity-60"
         >
-          {submitting ? 'Creating account...' : 'Sign up'}
+          {submitting ? 'Creating account...' : 'Create Account'}
         </button>
-
-        <p className="text-sm text-gray-600 mt-4 text-center">
-          Already have an account?{' '}
-          <Link to="/login" className="text-brand font-medium">
-            Log in
-          </Link>
-        </p>
       </form>
-    </div>
+
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-6 text-center">
+        Already have an account?{' '}
+        <Link to="/login" className="text-brand font-medium">
+          Sign in
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }
 

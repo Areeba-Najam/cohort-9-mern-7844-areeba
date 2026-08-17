@@ -1,9 +1,9 @@
 const Note = require('../models/Note');
 const { AppError } = require('../middleware/errorHandler');
 
-const createNote = async (userId, { title, content, tags }) => {
+const createNote = async (userId, { title, content, tags, color }) => {
   try {
-    const note = await Note.create({ user: userId, title, content, tags });
+    const note = await Note.create({ user: userId, title, content, tags, color });
     return note;
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -39,7 +39,7 @@ const getNoteById = async (userId, noteId) => {
 };
 
 const updateNote = async (userId, noteId, updates) => {
-  const allowedFields = ['title', 'content', 'isPinned', 'tags'];
+  const allowedFields = ['title', 'content', 'isPinned', 'tags', 'color'];
   const sanitizedUpdates = {};
 
   for (const field of allowedFields) {
