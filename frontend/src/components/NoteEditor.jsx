@@ -76,6 +76,7 @@ function NoteEditor({ note, onSave, onCancel }) {
   return (
     <div
       role="presentation"
+      aria-hidden="true"
       className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleCancel();
