@@ -38,6 +38,16 @@ function NoteEditor({ note, onSave, onCancel }) {
     onCancel();
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleCancel();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDirty]);
+  
   const handleSave = async () => {
     if (!title.trim()) {
       setError('Title is required');
@@ -68,7 +78,6 @@ function NoteEditor({ note, onSave, onCancel }) {
   const bgLight = ColorObj.light || '#ffffff';
   const bgDark = ColorObj.dark || '#1f2937';
   
-  // 🌙 Solid background in dark mode, gentle transparency option in light mode
   const modalGradient = theme === 'dark' 
     ? `linear-gradient(160deg, ${bgDark}, ${bgDark})` 
     : `linear-gradient(160deg, ${bgLight}, ${bgLight}e6)`;
@@ -76,18 +85,18 @@ function NoteEditor({ note, onSave, onCancel }) {
   return (
     <div
       role="presentation"
-      aria-hidden="true"
       className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleCancel();
       }}
       onKeyDown={(e) => {
-        if (e.key === 'Escape') handleCancel();
+        if (e.key === 'Escape' || e.key === 'Enter') handleCancel();
       }}
     >
       <div
         role="dialog"
         aria-modal="true"
+        aria-label="Note Editor Modal"
         className="rounded-2xl shadow-2xl border border-black/10 dark:border-white/10 w-full max-w-lg p-6 cursor-default"
         style={{ background: modalGradient }}
       >
@@ -101,7 +110,6 @@ function NoteEditor({ note, onSave, onCancel }) {
           </p>
         )}
 
-        {/* Title Input with visible dark mode text */}
         <input
           aria-label="Note title"
           placeholder="Title"
@@ -114,7 +122,6 @@ function NoteEditor({ note, onSave, onCancel }) {
           <RichTextEditor content={content} onChange={setContent} />
         </div>
 
-        {/* Tags Input with visible dark mode text */}
         <input
           aria-label="Note tags"
           placeholder="Tags (comma separated)"
