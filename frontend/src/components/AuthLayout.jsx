@@ -22,10 +22,11 @@ function AuthLayout({ heading, subheading, children }) {
       </div>
     </div>
   );
+}
+
   AuthLayout.propTypes = {
   children: PropTypes.node.isRequired,
   heading: PropTypes.string.isRequired,
   subheading: PropTypes.string.isRequired,
-}
 }
 export default AuthLayout;

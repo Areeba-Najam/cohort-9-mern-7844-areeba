@@ -67,5 +67,52 @@ const deleteNote = asyncHandler(async (req, res) => {
     message: 'Note deleted successfully',
   });
 });
+const importNotes = asyncHandler(async (req, res) => {
+  const fileData = req.body; 
+  let rawNotes = [];
+  let fileOwner = null;
 
-module.exports = { createNote, getNotes, getNote, updateNote, deleteNote };
+  if (Array.isArray(fileData)) {
+    rawNotes = fileData;
+  } else if (fileData && typeof fileData === 'object' && Array.isArray(fileData.notes)) {
+    rawNotes = fileData.notes;
+    fileOwner = fileData.exportedBy;
+  } else {
+    throw new AppError('Invalid file format. Expected a valid notes export file.', 400);
+  }
+
+  if (fileOwner && fileOwner !== req.user._id.toString() && fileOwner !== req.user.id.toString()) {
+    throw new AppError('Privacy Error: You cannot import a file exported from another user account!', 403);
+  }
+
+  if (rawNotes.length === 0) {
+    throw new AppError('The export file contains no notes to import.', 400);
+  }
+
+  const sanitizedNotes = rawNotes.map((note) => {
+    if (!note.title || typeof note.title !== 'string' || !note.title.trim()) {
+      throw new AppError('One or more notes are missing a valid title.', 400);
+    }
+
+    return {
+      user: req.user._id || req.user.id,
+      title: note.title.trim(),
+      content: typeof note.content === 'string' ? note.content : '',
+      isPinned: Boolean(note.isPinned),
+      tags: Array.isArray(note.tags) ? note.tags.map(t => String(t).trim()) : [],
+      color: note.color || 'default',
+      createdAt: note.createdAt ? new Date(note.createdAt) : new Date(),
+      updatedAt: note.updatedAt ? new Date(note.updatedAt) : new Date(),
+    };
+  });
+
+  const insertedNotes = await noteService.importNotesForUser(req.user._id || req.user.id, sanitizedNotes);
+
+  res.status(201).json({
+    success: true,
+    message: `Successfully imported ${insertedNotes.length} note(s).`,
+    data: { notes: insertedNotes },
+  });
+});
+
+module.exports = { createNote, getNotes, getNote, updateNote, deleteNote, importNotes };

@@ -92,5 +92,16 @@ const deleteNote = async (userId, noteId) => {
   }
   return note;
 };
+async function importNotesForUser(userId, notes) {
+  const notesWithUser = notes.map(note => {
+    const { _id, ...rest } = note; 
+    return {
+      ...rest,
+      user: userId, 
+    };
+  });
 
-module.exports = { createNote, getNotesForUser, getNoteById, updateNote, deleteNote };
+  return await Note.insertMany(notesWithUser);
+}
+
+module.exports = { createNote, getNotesForUser, getNoteById, updateNote, deleteNote,importNotesForUser };

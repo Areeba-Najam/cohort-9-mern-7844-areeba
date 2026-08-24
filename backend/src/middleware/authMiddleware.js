@@ -5,8 +5,8 @@ const { AppError, asyncHandler } = require('./errorHandler');
 const protect = asyncHandler(async (req, res, next) => {
   let token;
   const authHeader = req.headers.authorization;
-
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  
+  if (authHeader?.startsWith('Bearer ')) {
     token = authHeader.split(' ')[1];
   }
 
