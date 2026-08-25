@@ -219,4 +219,41 @@ describe('Note API endpoints', () => {
       expect(getRes).to.have.status(404);
     });
   });
+
+  describe('POST /api/notes/import', () => {
+    it('rejects a malformed import payload', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes/import')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ notInAnArray: true });
+
+      expect(res).to.have.status(400);
+    });
+
+    it('rejects an import claiming to be from a different account', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes/import')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          version: '1.0',
+          exportedBy: 'someone-elses-fake-user-id',
+          notes: [{ title: 'Sneaky note' }],
+        });
+
+      expect(res).to.have.status(403);
+    });
+
+    it('accepts a valid import from the same account', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes/import')
+        .set('Authorization', `Bearer ${token}`)
+        .send([{ title: 'Imported note', content: '', tags: [] }]);
+
+      expect(res).to.have.status(201);
+      expect(res.body.data.notes).to.have.lengthOf(1);
+    });
+  });
 });

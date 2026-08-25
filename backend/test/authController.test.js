@@ -112,14 +112,6 @@ describe('Auth API endpoints', () => {
       expect(res.body.success).to.be.false;
     });
 
-    it('should reject malformed or foreign note imports securely', async () => {
-      const res = await request(app)
-        .post('/api/notes/import')
-        .set('Authorization', `Bearer ${token}`)
-        .send({ notes: 'invalid-format' });
-      expect(res.status).toBe(400);
-      });
-
     it('returns 401 for an invalid token', async () => {
       const res = await chai
         .request(app)
