@@ -8,7 +8,7 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 const { connect, closeDatabase, clearDatabase } = require('./helpers/testDb');
-const request= require('supertest');
+const request = require('supertest');
 const app = require('../src/app');
 
 describe('Auth API endpoints', () => {
@@ -54,6 +54,14 @@ describe('Auth API endpoints', () => {
       expect(res).to.have.status(409);
       expect(res.body.success).to.be.false;
     });
+
+    it('returns 400 when missing required fields during registration', async () => {
+      const res = await chai.request(app).post('/api/auth/register').send({
+        email: 'incomplete@example.com',
+      });
+
+      expect(res).to.have.status(400);
+    });
   });
 
   describe('POST /api/auth/login', () => {
@@ -83,6 +91,12 @@ describe('Auth API endpoints', () => {
 
       expect(res).to.have.status(401);
       expect(res.body.success).to.be.false;
+    });
+
+    it('returns 400 when login payload is empty', async () => {
+      const res = await chai.request(app).post('/api/auth/login').send({});
+
+      expect(res).to.have.status(400);
     });
   });
 
