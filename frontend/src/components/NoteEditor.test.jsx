@@ -65,3 +65,40 @@ test('Warns before discarding unsaved changes on cancel', () => {
 
   confirmSpy.mockRestore();
 });
+test('Successfully submits valid note data with tags and colors', async () => {
+  const onSave = vi.fn().mockResolvedValue();
+  render(
+    <ThemeProvider>
+      <NoteEditor note={null} onSave={onSave} onCancel={vi.fn()} />
+    </ThemeProvider>
+  );
+
+  fireEvent.change(screen.getByLabelText(/note title/i), { target: { value: 'New Test Note' } });
+  fireEvent.change(screen.getByLabelText(/note tags/i), { target: { value: 'tag1, tag2' } });
+  
+  fireEvent.click(screen.getByText(/save/i));
+
+  expect(onSave).toHaveBeenCalledWith({
+    title: 'New Test Note',
+    content: '',
+    tags: ['tag1', 'tag2'],
+    color: 'default',
+  });
+});
+
+test('Displays network or server error message when save fails', async () => {
+  const onSave = vi.fn().mockRejectedValue({
+    response: { data: { message: 'Server validation failed' } }
+  });
+
+  render(
+    <ThemeProvider>
+      <NoteEditor note={null} onSave={onSave} onCancel={vi.fn()} />
+    </ThemeProvider>
+  );
+
+  fireEvent.change(screen.getByLabelText(/note title/i), { target: { value: 'Fail Note' } });
+  fireEvent.click(screen.getByText(/save/i));
+
+  expect(await screen.findByText(/server validation failed/i)).toBeInTheDocument();
+});

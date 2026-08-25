@@ -256,4 +256,25 @@ describe('Note API endpoints', () => {
       expect(res.body.data.notes).to.have.lengthOf(1);
     });
   });
+
+  describe('Edge cases and Error handling', () => {
+    it('Returns 404 for a malformed note ID format on GET /api/notes/:id', async () => {
+      const res = await chai
+        .request(app)
+        .get('/api/notes/invalid-ObjectId-format')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(res).to.have.status(404);
+    });
+
+    it('Returns 404 when trying to delete a non-existent note', async () => {
+      const fakeId = '5f4e3d2c1b0a9f8e7d6c5b4a';
+      const res = await chai
+        .request(app)
+        .delete(`/api/notes/${fakeId}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(res).to.have.status(404);
+    });
+  });
 });
