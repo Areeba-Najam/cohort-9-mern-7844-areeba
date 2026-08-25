@@ -1,9 +1,8 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
 import { ThemeProvider } from '../context/ThemeContext';
 import Profile from './Profile';
-import { vi } from 'vitest';
 
 function renderProfile() {
   return render(
@@ -35,6 +34,6 @@ test('Renders a logout button', () => {
 test('Renders profile fields and password change components', async () => {
   renderProfile();
   await waitFor(() => {
-    expect(screen.getByText(/profile/i)).toBeInTheDocument();
+    expect(screen.getByText(/total notes/i)).toBeInTheDocument();
   });
 });
