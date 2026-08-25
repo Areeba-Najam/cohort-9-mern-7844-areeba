@@ -24,3 +24,25 @@ test('Calls onSelect with the chosen color name', () => {
   fireEvent.click(screen.getByLabelText('Set note color to mint'));
   expect(onSelect).toHaveBeenCalledWith('mint');
 });
+
+test('Uses the light background color when theme is light', () => {
+  localStorage.setItem('theme', 'light');
+  const { container } = render(
+    <ThemeProvider>
+      <ColorPicker selected="mint" onSelect={vi.fn()} />
+    </ThemeProvider>
+  );
+  const mintSwatch = screen.getByLabelText('Set note color to mint');
+  expect(mintSwatch).toHaveStyle({ background: '#e0f2f1' });
+});
+
+test('Uses the dark background color when theme is dark', () => {
+  localStorage.setItem('theme', 'dark');
+  const { container } = render(
+    <ThemeProvider>
+      <ColorPicker selected="mint" onSelect={vi.fn()} />
+    </ThemeProvider>
+  );
+  const mintSwatch = screen.getByLabelText('Set note color to mint');
+  expect(mintSwatch).toHaveStyle({ background: '#16423c' });
+});
