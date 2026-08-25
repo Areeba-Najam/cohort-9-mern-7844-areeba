@@ -36,29 +36,32 @@ function ExportImport({ notes, selectedIds, onImported }) {
   };
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-    try {
-      const text = await file.text();
-      const parsed = JSON.parse(text);
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
 
-      if (!Array.isArray(parsed)) {
-        throw new TypeErrorError('File must contain an array of notes');
-      }
+    const isPlainArray = Array.isArray(parsed);
+    const isWrappedFormat = parsed && typeof parsed === 'object' && Array.isArray(parsed.notes);
 
-      const res = await api.post('/notes/import', parsed);
-      const importedNotes = res.data.data?.notes || res.data.notes || [];
-
-      onImported(importedNotes);
-      window.alert(`Successfully imported ${importedNotes.length} note(s)!`);
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Privacy Error: You cannot import a file exported from another user account!';
-      window.alert(errorMessage);
-    } finally {
-      e.target.value = '';
+    if (!isPlainArray && !isWrappedFormat) {
+      throw new Error('File must be a notes export — either an array of notes or an object with a "notes" array.');
     }
-  };
+
+    const res = await api.post('/notes/import', parsed);
+    const importedNotes = res.data.data?.notes || res.data.notes || [];
+
+    onImported(importedNotes);
+    window.alert(`Successfully imported ${importedNotes.length} note(s)!`);
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || err.message || 'Could not import file. Please check it is a valid notes export.';
+    window.alert(errorMessage);
+  } finally {
+    e.target.value = '';
+  }
+};
 
   return (
     <div className="flex items-center gap-2">

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useTheme } from '../context/ThemeContext';
 import { useEffect } from 'react';
 
-function RichTextEditor({ content, onChange }) {
+function RichTextEditor({ content = '', onChange }) {
   const { theme } = useTheme();
 
   const editor = useEditor({
@@ -25,7 +25,6 @@ function RichTextEditor({ content, onChange }) {
 
   if (!editor) return null;
 
-  // Clean variables to avoid nested ternaries (Satisfies SonarQube S3358)
   let containerClasses = 'border rounded-lg overflow-hidden transition-colors ';
   if (theme === 'dark') {
     containerClasses += 'border-gray-700 bg-black/40 text-white [&_.ProseMirror]:text-white [&_.ProseMirror_*]:text-white';
@@ -57,7 +56,7 @@ function RichTextEditor({ content, onChange }) {
   );
 }
 
-function ToolbarBtn({ active, onClick, children, theme }) {
+function ToolbarBtn({ active = false, onClick, children, theme = 'light' }) {
   let btnClasses = 'text-xs px-2.5 py-1 rounded transition-colors ';
   if (active) {
     btnClasses += 'bg-brand text-white';
@@ -79,20 +78,11 @@ RichTextEditor.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-RichTextEditor.defaultProps = {
-  content: '',
-};
-
 ToolbarBtn.propTypes = {
   active: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
   theme: PropTypes.string,
-};
-
-ToolbarBtn.defaultProps = {
-  active: false,
-  theme: 'light',
 };
 
 export default RichTextEditor;

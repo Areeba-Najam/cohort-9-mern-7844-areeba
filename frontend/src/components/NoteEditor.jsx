@@ -38,16 +38,6 @@ function NoteEditor({ note, onSave, onCancel }) {
     onCancel();
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        handleCancel();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isDirty]);
-  
   const handleSave = async () => {
     if (!title.trim()) {
       setError('Title is required');
@@ -90,7 +80,7 @@ function NoteEditor({ note, onSave, onCancel }) {
         if (e.target === e.currentTarget) handleCancel();
       }}
       onKeyDown={(e) => {
-        if (e.key === 'Escape' || e.key === 'Enter') handleCancel();
+        if (e.key === 'Escape') handleCancel();
       }}
     >
       <div
@@ -165,10 +155,6 @@ NoteEditor.propTypes = {
   }),
   onSave: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-};
-
-NoteEditor.defaultProps = {
-  note: null,
 };
 
 export default NoteEditor;
