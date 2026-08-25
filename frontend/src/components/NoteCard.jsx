@@ -132,8 +132,4 @@ NoteCard.propTypes = {
   onToggleSelect: PropTypes.func.isRequired,
 };
 
-NoteCard.defaultProps = {
-  isSelected: false,
-};
-
 export default NoteCard;
