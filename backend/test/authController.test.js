@@ -8,7 +8,7 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 const { connect, closeDatabase, clearDatabase } = require('./helpers/testDb');
-import request from 'supertest';
+const request= require('supertest');
 const app = require('../src/app');
 
 describe('Auth API endpoints', () => {
