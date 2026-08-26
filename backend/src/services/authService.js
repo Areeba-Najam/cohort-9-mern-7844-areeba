@@ -47,13 +47,25 @@ const loginUser = async ({ email, password }) => {
 };
 
 const changePassword = async (userId, currentPassword, newPassword) => {
-  const user = await User.findById(userId).select('+password');
-  const isMatch = await user.comparePassword(currentPassword);
-  if (!isMatch) {
-    throw new AppError('Current password is incorrect', 401);
+  try {
+    const user = await User.findById(userId).select('+password');
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      throw new AppError('Current password is incorrect', 401);
+    }
+    user.password = newPassword;
+    await user.save();
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    if (err.name === 'ValidationError') {
+      throw new AppError(err.message, 400);
+    }
+    throw new AppError('Failed to change password', 500);
   }
-  user.password = newPassword;
-  await user.save();
 };
 
 module.exports = {

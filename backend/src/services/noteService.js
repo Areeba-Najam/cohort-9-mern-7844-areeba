@@ -94,14 +94,21 @@ const deleteNote = async (userId, noteId) => {
 };
 async function importNotesForUser(userId, notes) {
   const notesWithUser = notes.map(note => {
-    const { _id, ...rest } = note; 
+    const { _id, ...rest } = note;
     return {
       ...rest,
-      user: userId, 
+      user: userId,
     };
   });
 
-  return await Note.insertMany(notesWithUser);
+  try {
+    return await Note.insertMany(notesWithUser, { ordered: true });
+  } catch (err) {
+    if (err.name === 'ValidationError' || err.name === 'CastError' || err.name === 'MongoBulkWriteError') {
+      throw new AppError('One or more notes failed validation during import.', 400);
+    }
+    throw new AppError('Failed to import notes.', 500);
+  }
 }
 
-module.exports = { createNote, getNotesForUser, getNoteById, updateNote, deleteNote,importNotesForUser };
+module.exports = { createNote, getNotesForUser, getNoteById, updateNote, deleteNote, importNotesForUser };

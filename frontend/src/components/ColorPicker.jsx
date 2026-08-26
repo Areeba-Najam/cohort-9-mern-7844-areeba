@@ -31,7 +31,7 @@ function ColorPicker({ selected, onSelect }) {
 }
 
 ColorPicker.propTypes = {
-  selected: PropTypes.string,
+  selected: PropTypes.string.isRequired,
   onSelect: PropTypes.func.isRequired,
 };
 

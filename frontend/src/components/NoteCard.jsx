@@ -35,6 +35,11 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete, isSelected, onToggleSel
           e.stopPropagation();
           onToggleSelect(note._id);
         }}
+        onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.stopPropagation();
+          }
+        }}
         className={`absolute top-4 left-4 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
           isSelected ? 'bg-brand border-brand' : 'bg-white/80 border-gray-300 dark:bg-black/20 dark:border-white/30'
         }`}

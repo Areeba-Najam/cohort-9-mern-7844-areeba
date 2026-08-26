@@ -138,6 +138,7 @@ function Dashboard() {
     try {
       await deleteNote(note._id);
       setNotes((prev) => prev.filter((n) => n._id !== note._id));
+      setSelectedIds((prev) => prev.filter((id) => id !== note._id));
     } catch (err) {
       console.error('Failed to delete note:', err);
       setError('Could not delete the note. Please try again.');

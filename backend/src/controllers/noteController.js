@@ -90,6 +90,10 @@ const importNotes = asyncHandler(async (req, res) => {
   }
 
   const sanitizedNotes = rawNotes.map((note) => {
+  if (!note || typeof note !== 'object' || Array.isArray(note)) {
+    throw new AppError('One or more import entries are not valid note objects.', 400);
+  }
+
     if (!note.title || typeof note.title !== 'string' || !note.title.trim()) {
       throw new AppError('One or more notes are missing a valid title.', 400);
     }

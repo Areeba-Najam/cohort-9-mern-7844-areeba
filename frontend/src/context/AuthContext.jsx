@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect,useMemo } from 'react';
 import api from '../services/api';
+import PropTypes from 'prop-types';
 
 const AuthContext = createContext(null);
 
@@ -60,3 +61,7 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used inside an AuthProvider');
   return ctx;
 }
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};

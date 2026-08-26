@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import RichTextEditor from './RichTextEditor';
 import ColorPicker, { NOTE_COLORS } from './ColorPicker';
@@ -24,6 +24,20 @@ function NoteEditor({ note, onSave, onCancel }) {
     setError('');
   }, [note, defaultColorName]);
 
+  const dialogRef = useRef(null);
+
+useEffect(() => {
+  const dialogEl = dialogRef.current;
+  if (dialogEl && !dialogEl.open) {
+    dialogEl.showModal();
+    dialogEl.focus();
+  }
+  return () => {
+    if (dialogEl?.open) {
+        dialogEl.close();
+      }
+  };
+  }, []);
   const isDirty =
     title !== (note?.title || '') ||
     content !== (note?.content || '') ||
