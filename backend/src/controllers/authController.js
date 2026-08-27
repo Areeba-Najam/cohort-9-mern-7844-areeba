@@ -1,4 +1,4 @@
-const { AppError,asyncHandler } = require('../middleware/errorHandler');
+const { AppError, asyncHandler } = require('../middleware/errorHandler');
 const authService = require('../services/authService');
 
 const register = asyncHandler(async (req, res) => {
@@ -9,7 +9,7 @@ const register = asyncHandler(async (req, res) => {
   const { user, token } = await authService.registerUser({ name, email, password });
   res.status(201).json({
     success: true,
-    data: { user, token }
+    data: { user, token },
   });
 });
 
@@ -22,15 +22,24 @@ const login = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    data: { user, token }
+    data: { user, token },
   });
 });
 
 const getMe = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
-    data: { user: req.user }
+    data: { user: req.user },
   });
 });
 
-module.exports = { register, login, getMe };
+const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    throw new AppError('Please provide both current and new password', 400);
+  }
+  await authService.changePassword(req.user._id, currentPassword, newPassword);
+  res.status(200).json({ success: true, message: 'Password changed successfully.' });
+});
+
+module.exports = { register, login, getMe, changePassword };

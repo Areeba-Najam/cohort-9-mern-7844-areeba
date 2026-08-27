@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo} from 'react';
 import PropTypes from 'prop-types';
 
 const ThemeContext = createContext(null);
@@ -14,16 +14,17 @@ export function ThemeProvider({ children }) {
   }, [theme]);
 
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
-
+  const value = useMemo(() => ({ theme, toggleTheme }), [theme]);
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
-  ThemeProvider.propTypes = {
+}
+
+ ThemeProvider.propTypes = {
   children: PropTypes.node.isRequired,
-}
-}
+};
 
 export function useTheme() {
   const ctx = useContext(ThemeContext);

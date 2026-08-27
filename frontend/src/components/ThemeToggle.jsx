@@ -5,6 +5,7 @@ function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
       aria-label="Toggle dark mode"
       aria-pressed={theme === 'dark'}

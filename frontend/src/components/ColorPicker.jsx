@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useTheme } from '../context/ThemeContext';
 export const NOTE_COLORS = [
   { name: 'default', light: '#ffffff', dark: '#18181b' }, 
   { name: 'peach', light: '#ffe8d6', dark: '#522b29' },
@@ -9,6 +10,7 @@ export const NOTE_COLORS = [
   { name: 'sage', light: '#d8f3dc', dark: '#24422e' },    
 ];
 function ColorPicker({ selected, onSelect }) {
+  const { theme } = useTheme();
   return (
     <div className="flex gap-2">
       {NOTE_COLORS.map((color) => (
@@ -21,7 +23,7 @@ function ColorPicker({ selected, onSelect }) {
           className={`w-7 h-7 rounded-full border-2 transition-transform ${
             selected === color.name ? 'border-brand scale-110' : 'border-transparent'
           }`}
-          style={{ backgroundColor: color.light }}
+          style={{ background: theme === 'dark' ? color.dark : color.light,}}
         />
       ))}
     </div>
@@ -29,7 +31,7 @@ function ColorPicker({ selected, onSelect }) {
 }
 
 ColorPicker.propTypes = {
-  selected: PropTypes.string,
+  selected: PropTypes.string.isRequired,
   onSelect: PropTypes.func.isRequired,
 };
 

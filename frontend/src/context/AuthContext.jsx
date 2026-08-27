@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect,useMemo } from 'react';
 import api from '../services/api';
+import PropTypes from 'prop-types';
 
 const AuthContext = createContext(null);
 
@@ -46,9 +47,10 @@ const register = async (name, email, password) => {
     localStorage.removeItem('token');
     setUser(null);
   };
+  const value = useMemo(() => ({ user, loading, login, register, logout }), [user, loading]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
@@ -59,3 +61,7 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used inside an AuthProvider');
   return ctx;
 }
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};

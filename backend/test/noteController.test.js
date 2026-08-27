@@ -219,4 +219,62 @@ describe('Note API endpoints', () => {
       expect(getRes).to.have.status(404);
     });
   });
+
+  describe('POST /api/notes/import', () => {
+    it('rejects a malformed import payload', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes/import')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ notInAnArray: true });
+
+      expect(res).to.have.status(400);
+    });
+
+    it('rejects an import claiming to be from a different account', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes/import')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          version: '1.0',
+          exportedBy: 'someone-elses-fake-user-id',
+          notes: [{ title: 'Sneaky note' }],
+        });
+
+      expect(res).to.have.status(403);
+    });
+
+    it('accepts a valid import from the same account', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/notes/import')
+        .set('Authorization', `Bearer ${token}`)
+        .send([{ title: 'Imported note', content: '', tags: [] }]);
+
+      expect(res).to.have.status(201);
+      expect(res.body.data.notes).to.have.lengthOf(1);
+    });
+  });
+
+  describe('Edge cases and Error handling', () => {
+    it('Returns 404 for a malformed note ID format on GET /api/notes/:id', async () => {
+      const res = await chai
+        .request(app)
+        .get('/api/notes/invalid-ObjectId-format')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(res).to.have.status(404);
+    });
+
+    it('Returns 404 when trying to delete a non-existent note', async () => {
+      const fakeId = '5f4e3d2c1b0a9f8e7d6c5b4a';
+      const res = await chai
+        .request(app)
+        .delete(`/api/notes/${fakeId}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(res).to.have.status(404);
+    });
+  });
 });

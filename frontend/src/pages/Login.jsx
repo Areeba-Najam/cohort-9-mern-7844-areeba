@@ -66,7 +66,7 @@ function Login() {
           placeholder="••••••••"
           className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl px-4 py-2.5 text-sm mb-6 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
-
+    
         <button
           type="submit"
           disabled={submitting}

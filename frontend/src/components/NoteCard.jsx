@@ -6,7 +6,7 @@ function colorFor(name) {
   return NOTE_COLORS.find((c) => c.name === name) || NOTE_COLORS[0];
 }
 
-function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
+function NoteCard({ note, onOpen, onTogglePin, onDelete, isSelected, onToggleSelect }) {
   const color = colorFor(note.color);
   const { theme } = useTheme();
 
@@ -14,8 +14,12 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
     <div
       role="button"
       tabIndex={0}
-      className="break-inside-avoid mb-4 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-950"
-      style={{ backgroundColor: theme === 'dark' ? color.dark : color.light }}
+      className={`relative break-inside-avoid mb-4 rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-950 ${
+        isSelected ? 'border-brand ring-2 ring-brand' : 'border-black/5 dark:border-white/10'
+      }`}
+      style={{
+        background: `linear-gradient(160deg, ${theme === 'dark' ? color.dark : color.light}, ${theme === 'dark' ? color.dark : color.light}cc)`,
+      }}
       onClick={() => onOpen(note)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -24,12 +28,36 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
         }
       }}
     >
-      <div className="p-5">
+      <button
+        type="button"
+        aria-label={isSelected ? 'Deselect note' : 'Select note'}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleSelect(note._id);
+        }}
+        onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.stopPropagation();
+          }
+        }}
+        className={`absolute top-4 left-4 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+          isSelected ? 'bg-brand border-brand' : 'bg-white/80 border-gray-300 dark:bg-black/20 dark:border-white/30'
+        }`}
+      >
+        {isSelected && (
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6l3 3 5-6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </button>
+
+      <div className="p-5 pl-12">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg tracking-tight leading-snug break-words">
             {note.title}
           </h3>
           <button
+             type="button"
             aria-label={note.isPinned ? 'Unpin note' : 'Pin note'}
             aria-pressed={note.isPinned}
             onClick={(e) => {
@@ -44,7 +72,7 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
         
         {note.content && (
           <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 font-medium break-words line-clamp-6 leading-relaxed">
-            {note.content.replace(/<[^>]*>/g, ' ').trim()}
+            {new DOMParser().parseFromString(note.content, 'text/html').body.textContent || ''}
           </p>
         )}
         
@@ -64,6 +92,7 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
           </span>
           <div className="flex gap-4">
             <button
+              type="button"
               aria-label="Edit note"
               onClick={(e) => {
                 e.stopPropagation();
@@ -74,6 +103,7 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete }) {
               Edit
             </button>
             <button
+              type="button"
               aria-label="Delete note"
               onClick={(e) => {
                 e.stopPropagation();
@@ -103,6 +133,8 @@ NoteCard.propTypes = {
   onOpen: PropTypes.func.isRequired,
   onTogglePin: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool,
+  onToggleSelect: PropTypes.func.isRequired,
 };
 
 export default NoteCard;
