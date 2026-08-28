@@ -1,19 +1,19 @@
 # cohort-9-mern-7844-areeba
 Cohort 9 - MERN (NodeJS+ReactJS) assignment for Areeba Najam 
-markdown
+
 # Notes App
 
 A full-stack note-taking application built as part of my MERN stack internship at 10 Pearls. Users can sign up, create rich-text notes, organize them with colors and tags, and manage their account securely ,all built with a proper engineering workflow: feature branches, PR reviews, automated code quality checks by Sonar, and test coverage.
 
 ## What it does
 
--Sign up, log in, log out: JWT based auth, passwords hashed with bcrypt
--Create, edit, and delete notes: Each note supports rich text formatting (bold, italic, headings, lists)
--Organize notes : Pin important ones, tag them, pick a color, search and filter
--Dark mode : Persists across sessions
--Change password : From your profile, with current-password verification
--Export and import : Download your notes as JSON (all of them, or just the ones you select), and bring them back in later
--User profile : see your note count, manage your account
+- Sign up, log in, log out: JWT-based auth, passwords hashed with bcrypt
+- Create, edit, and delete notes: Each note supports rich text formatting (bold, italic, headings, lists)
+- Organize notes : Pin important ones, tag them, pick a color, search and filter
+- Dark mode : Persists across sessions
+- Change password : From your profile, with current-password verification
+- Export and import : Download your notes as JSON (all of them, or just the ones you select), and bring them back in later
+- User profile : see your note count, manage your account
 
 ## Tech stack
 
@@ -115,8 +115,8 @@ npm run test:coverage # run with coverage report
 
 Every pull request in this project went through two layers of automated review:
 
--CodeRabbit reviews the diff on every PR which flags bugs, security issues, and code smells before merge
--SonarCloud runs on every push tracks bugs, vulnerabilities, code duplication, and test coverage across the whole codebase
+- CodeRabbit reviews the diff on every PR which flags bugs, security issues, and code smells before merge
+- SonarCloud to runs on every push and tracks bugs, vulnerabilities, code duplication, and test coverage across the whole codebase
 
 ## API overview
 
@@ -133,20 +133,20 @@ Every pull request in this project went through two layers of automated review:
 | DELETE | `/api/notes/:id` | Delete a note |
 | POST | `/api/notes/import` | Import notes from a JSON export |
 
-All `/api/notes` routes require a valid JWT and only ever return notes that belong to the logged-in user.
+All `/api/notes` routes require a valid JWT-based and only ever return notes that belong to the logged-in user.
 
 ## How this was built
 
 This project followed a strict PR-based workflow . Every feature landed in its own branch, went through CodeRabbit review, and was tested before merging into `develop`. Backend and frontend work were kept in separate PRs so each one stayed focused and reviewable. A rough breakdown of how it came together:
 
-1.Backend and frontend infrastructure (logging, error handling, base React setup)
-2.Database connection and JWT authentication
-3.Note CRUD APIs, scoped per user
-4.Frontend auth screens
-5.Dashboard with rich text editor, search, and pin
-6.Dark mode, note colors, redesigned auth screens
-7.SonarCloud integration and test coverage
-8.Password change, export/import, polish
+1. Backend and frontend infrastructure (logging, error handling, base React setup)
+2. Database connection and JWT authentication
+3. Note CRUD APIs, scoped per user
+4. Frontend auth screens
+5. Dashboard with rich text editor, search, and pin
+6. Dark mode, note colors, redesigned auth screens
+7. SonarCloud integration and test coverage
+8. Password change, export/import, polish
 
 
 ## Author
