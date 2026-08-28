@@ -71,9 +71,10 @@ function NoteCard({ note, onOpen, onTogglePin, onDelete, isSelected, onToggleSel
         </div>
         
         {note.content && (
-          <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 font-medium break-words line-clamp-6 leading-relaxed">
-            {new DOMParser().parseFromString(note.content, 'text/html').body.textContent || ''}
-          </p>
+          <div 
+            className="mt-2 text-sm text-slate-700 dark:text-slate-300 font-medium break-words line-clamp-6 leading-relaxed prose prose-sm dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: note.content }}
+          />
         )}
         
         {note.tags?.length > 0 && (

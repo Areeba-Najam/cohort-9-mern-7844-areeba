@@ -56,11 +56,8 @@ function ExportImport({ notes, selectedIds, onImported }) {
     onImported(importedNotes);
     window.alert(`Successfully imported ${importedNotes.length} note(s)!`);
   } catch (err) {
-    console.error('IMPORT DEBUG:', err);
-    const errorMessage = '';
+    const errorMessage = err.response?.data?.message || err.message || 'Could not import file. Please check it is a valid notes export.';
     window.alert(errorMessage);
-    // const errorMessage = err.response?.data?.message || err.message || 'Could not import file. Please check it is a valid notes export.';
-    // window.alert(errorMessage);
   } finally {
     e.target.value = '';
   }
